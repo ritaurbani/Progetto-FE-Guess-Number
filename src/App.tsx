@@ -6,14 +6,23 @@ import './App.css';
 const numberToGuess = 10
 
 function App() {
-  const [currentNumber, setCurrentNumber] = useState<number>(0)
+  const [currentNumber, setCurrentNumber] = useState<number>()
   const [isGameFinished, setIsGameFinished] = useState<boolean>(false)
   const [gameMessage, setGameMessage] = useState<string>('Enter number')
   const [guess, setGuess] = useState<number[]>([])
-  
+  const [alertMsg, setAlertMsg] = useState<string>("")
+
 
   const handleSubmit = () => {
     console.log(currentNumber)
+    if (!currentNumber)
+      return
+    if (currentNumber < 0 || currentNumber > 100) {
+      setAlertMsg("Error number must be between 0 and 100")
+      return
+    } else {
+      setAlertMsg("")
+    }
     if (currentNumber > numberToGuess) {
       setGameMessage(`${currentNumber} is too high`)
     } else if (currentNumber < numberToGuess) {
@@ -21,12 +30,14 @@ function App() {
     } else {
       setGameMessage(`Correct! The number is ${currentNumber}`)
       setIsGameFinished(true)
+      return
     }
     setGuess([...guess, currentNumber])
   }
 
   const handleChange = (event: any) => {
-    setCurrentNumber(Number(event.target.value))
+    console.log(event.target.value)
+    return !event.target.value ? setCurrentNumber(0) : setCurrentNumber(Number(event.target.value)) 
   }
 
   const handleNewGame = () => {
@@ -40,10 +51,11 @@ function App() {
       <p>Enter a guess between 0 to 100</p>
       <input
         placeholder='Enter a number' className="input"
-        type="number"
+        type="text"
         value={currentNumber}
         onChange={handleChange}
       />
+      {alertMsg && <p>{alertMsg}</p>}
 
       <p>Enter a number between 0 and 100</p>
       <div className="actions">
@@ -59,8 +71,8 @@ function App() {
       </div>
       <div className="message">
         {gameMessage && <p>{gameMessage}</p>}
-        {guess.length > 0 && 
-        <p> {`Your guesses: ${guess}`}</p>
+        {guess.length > 0 &&
+          <p> {`Your guesses: ${guess}`}</p>
         }
       </div>
     </div>
